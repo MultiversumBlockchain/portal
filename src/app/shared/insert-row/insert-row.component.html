@@ -1,0 +1,73 @@
+<h2 mat-dialog-title>
+  Insert Row
+</h2>
+<mat-dialog-content>
+  <mat-horizontal-stepper linear="true" #stepper style="height: 100%;">
+    <mat-step >
+      <ng-template matStepLabel>Data</ng-template>
+
+      <mat-list>
+        <mat-list-item *ngFor="let d of row; let i = index; trackBy: trackByFn">
+          <mat-form-field>
+            <mat-label>{{ fields[i].name }}</mat-label>
+            <input text matInput [(ngModel)]="row[i]">
+          </mat-form-field>
+        </mat-list-item>
+      </mat-list>
+
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Approve</ng-template>
+
+      <table class="mat-table" >
+        <tr class="mat-row">
+          <td class="mat-cell">Allowance</td>
+          <td class="mat-cell">{{ db_allowanceHumanReadle }} eMTV</td>
+        </tr>
+        <tr class="mat-row">
+          <td class="mat-cell">Price</td>
+          <td class="mat-cell">{{ priceInsertIntoHumanReadable }} eMTV</td>
+        </tr>
+        <tr class="mat-row">
+          <td class="mat-cell">Transaction</td>
+          <td class="mat-cell">{{ approveTransaction && approveTransaction.hash }}</td>
+        </tr>
+        <tr class="mat-row">
+          <td class="mat-cell">Transaction Status:</td>
+          <td class="mat-cell">
+            {{ (approveTransaction && approveTransaction.blockHash) ? "Confirmed" : ""}}
+            {{ (approveTransaction && !approveTransaction.blockHash) ? "Pending" : ""}}
+          </td>
+        </tr>
+      </table>
+      <mat-progress-bar *ngIf="approveTransaction && ! approveTransaction.blockHash" mode="indeterminate"></mat-progress-bar>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Insert</ng-template>
+
+      <table class="mat-table" >
+        <tr class="mat-row">
+          <td class="mat-cell">Transaction</td>
+          <td class="mat-cell">{{ insertTransaction && insertTransaction.hash }}</td>
+        </tr>
+        <tr class="mat-row">
+          <td class="mat-cell">Transaction Status:</td>
+          <td class="mat-cell">
+            {{ (insertTransaction && insertTransaction.blockHash) ? "Confirmed" : ""}}
+            {{ (insertTransaction && !insertTransaction.blockHash) ? "Pending" : ""}}
+          </td>
+        </tr>
+      </table>
+      <mat-progress-bar *ngIf="insertTransaction && ! insertTransaction.blockHash" mode="indeterminate"></mat-progress-bar>
+    </mat-step>
+  </mat-horizontal-stepper>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-flat-button color="warn" *ngIf="(this.stepper.selectedIndex != 2) && (!insertTransaction)" (click)="cancel()">Cancel</button>
+  <span class="spacer"></span>
+  <button mat-flat-button *ngIf="this.stepper.selectedIndex == 0" (click)="next()">Next<mat-icon>arrow_right</mat-icon></button>
+  <button mat-flat-button *ngIf="this.stepper.selectedIndex == 1 && (approveTransaction && approveTransaction.blockHash)" (click)="next()">Next<mat-icon>arrow_right</mat-icon></button>
+
+  <button mat-button *ngIf="(this.stepper.selectedIndex == 1) && (!approveTransaction)" (click)="approve()">Approve</button>
+  <button mat-flat-button [disabled]="insertTransaction && ! insertTransaction.blockHash" *ngIf="this.stepper.selectedIndex == 2 && (approveTransaction && approveTransaction.blockHash) && (!insertTransaction)" (click)="insert()">Insert</button>
+  <button mat-flat-button *ngIf="this.stepper.selectedIndex == 2 && insertTransaction && insertTransaction.blockHash" (click)="cancel()">Close</button></mat-dialog-actions>

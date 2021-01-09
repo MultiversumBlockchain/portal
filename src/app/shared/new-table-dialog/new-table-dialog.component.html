@@ -1,0 +1,153 @@
+<h2 mat-dialog-title>Create Table</h2>
+<mat-dialog-content>
+  <mat-horizontal-stepper linear="true" #stepper style="height: 100%;">
+    <mat-step >
+      <ng-template matStepLabel>Data</ng-template>
+      <mat-card>
+        <mat-card-header>
+          Table Name:
+        </mat-card-header>
+        <mat-form-field>
+          <input text matInput [(ngModel)]="name">
+        </mat-form-field>
+      </mat-card>
+      <mat-card>
+        <mat-list>
+          <mat-card-header>
+            Fields:
+          </mat-card-header>
+          <mat-list-item *ngFor="let field of fields; let i = index; trackBy: trackByFn">
+            <mat-form-field>
+              <mat-label>Name:</mat-label>
+              <input text matInput [(ngModel)]="fields[i]">
+            </mat-form-field>
+            <button mat-icon-button (click)="remove(i)"><mat-icon>remove</mat-icon></button>
+          </mat-list-item>
+          <mat-list-item>
+            <a mat-list-item primary (click)="addField()">Add Field</a>
+          </mat-list-item>
+        </mat-list>
+      </mat-card>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Approve</ng-template>
+      <table class="mat-table" >
+        <tr class="mat-row">
+          <td class="mat-cell">Current Allowance</td>
+          <td class="mat-cell">{{ db_allowanceHumanReadle }} eMTV</td>
+        </tr>
+        <tr class="mat-row">
+          <td class="mat-cell">Price</td>
+          <td class="mat-cell">{{ priceCreateTableHumanReadable }} eMTV</td>
+        </tr>
+        <tr class="mat-row">
+          <td class="mat-cell">Transaction</td>
+          <td class="mat-cell">{{ approveTransaction && approveTransaction.hash }}</td>
+        </tr>
+        <tr class="mat-row">
+          <td class="mat-cell">Transaction Status:</td>
+          <td class="mat-cell">
+            {{ (approveTransaction && approveTransaction.blockHash) ? "Confirmed" : ""}}
+            {{ (approveTransaction && !approveTransaction.blockHash) ? "Pending" : ""}}
+          </td>
+        </tr>
+      </table>
+      <mat-progress-bar *ngIf="approveTransaction && ! approveTransaction.blockHash" mode="indeterminate"></mat-progress-bar>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Save</ng-template>
+        <table class="mat-table" >
+          <tr class="mat-row">
+            <td class="mat-cell">Transaction</td>
+            <td class="mat-cell">{{ createTransaction && createTransaction.hash }}</td>
+          </tr>
+          <tr class="mat-row">
+            <td class="mat-cell">Transaction Status:</td>
+            <td class="mat-cell">
+              {{ (createTransaction && createTransaction.blockHash) ? "Confirmed" : ""}}
+              {{ (createTransaction && !createTransaction.blockHash) ? "Pending" : ""}}
+            </td>
+          </tr>
+        </table>
+      <mat-progress-bar *ngIf="createTransaction && ! createTransaction.blockHash" mode="indeterminate"></mat-progress-bar>
+    </mat-step>
+  </mat-horizontal-stepper>
+</mat-dialog-content>
+<!-- <mat-dialog-actions align="end"> -->
+<mat-dialog-actions>
+  <button mat-flat-button color="warn" *ngIf="(this.stepper.selectedIndex != 2) && (!createTransaction)" (click)="cancel()">Cancel</button>
+  <span class="spacer"></span>
+  <button mat-flat-button *ngIf="this.stepper.selectedIndex == 0" (click)="next()">Next<mat-icon>arrow_right</mat-icon></button>
+  <button mat-flat-button *ngIf="this.stepper.selectedIndex == 1 && (createTransaction && createTransaction.blockHash)" (click)="next()">Next<mat-icon>arrow_right</mat-icon></button>
+
+  <button mat-button *ngIf="(this.stepper.selectedIndex == 1) && (!createTransaction)" (click)="approve()">Approve</button>
+  <button mat-flat-button [disabled]="createTransaction && ! createTransaction.blockHash" *ngIf="this.stepper.selectedIndex == 2 && (!createTransaction)" (click)="create()">Create</button>
+  <button mat-flat-button *ngIf="this.stepper.selectedIndex == 2 && createTransaction && createTransaction.blockHash" (click)="cancel()">Close</button>
+</mat-dialog-actions>
+
+<!--
+<h1 mat-dialog-title>New Table</h1>
+<div mat-dialog-content style="height: calc(100% - 96px);">
+  <mat-horizontal-stepper linear="true" #stepper style="height: 100%;">
+    <mat-step >
+        <div>
+          <button mat-button matStepperNext>Next</button>
+        </div>
+    </mat-step>
+    <mat-step>
+        <ng-template matStepLabel>Fields</ng-template>
+        <mat-list>
+          <mat-list-item *ngFor="let field of fields; let i = index; trackBy: trackByFn">
+            <mat-form-field>
+              <mat-label>Name:</mat-label>
+              <input text matInput [(ngModel)]="fields[i]">
+            </mat-form-field>
+            <button mat-icon-button (click)="remove(i)"><mat-icon>remove</mat-icon></button>
+          </mat-list-item>
+          <mat-list-item>
+            <a mat-list-item primary (click)="addField()">Add Field</a>
+          </mat-list-item>
+        </mat-list>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Approve</ng-template>
+      <p>Current allowance: {{ allowanceHumanReadable }} eMTV</p>
+      <p>Price create table : {{ priceCreateTableHumanReadable }} eMTV</p>
+
+      <p *ngIf="createTransaction">
+      Transaction: {{ createTransaction.hash }}
+      <button mat-icon-button (click)="toEtherScan(createTransaction.hash)">
+         <mat-icon>open_in_new</mat-icon>
+      </button>
+      </p>
+
+      <p *ngIf="createTransaction">Transaction Status: {{ createTransaction.status }}</p>
+      <p *ngIf="createTransaction && createTransaction.blockHash">Status: Confirmed</p>
+      <p *ngIf="createTransaction && !createTransaction.blockHash">Status: Pending</p>
+
+      <mat-progress-bar *ngIf="createTransaction && ! createTransaction.blockHash" mode="indeterminate"></mat-progress-bar>
+
+      <div>
+        <button mat-button [disabled]="createTransaction && createTransaction.blockHash"(click)="approve()">Approve</button>
+      </div>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Create</ng-template>
+
+      <p *ngIf="createTransaction">Transaction: {{ createTransaction.hash }}</p>
+      <p *ngIf="createTransaction">Transaction Status: {{ createTransaction.status }}</p>
+      <p *ngIf="createTransaction && createTransaction.blockHash">Status: Confirmed</p>
+      <p *ngIf="createTransaction && !createTransaction.blockHash">Status: Pending</p>
+
+      <mat-progress-bar *ngIf="createTransaction && ! createTransaction.blockHash" mode="indeterminate"></mat-progress-bar>
+
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button [disabled]="createTransaction && createTransaction.blockHash" (click)="create()">Create</button>
+      </div>
+    </mat-step>
+  </mat-horizontal-stepper>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button cdkFocusInitial (click)="close()">Close</button>
+</div> -->

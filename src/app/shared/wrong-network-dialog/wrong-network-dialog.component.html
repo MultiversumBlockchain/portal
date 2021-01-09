@@ -1,0 +1,11 @@
+<h1 mat-dialog-title>
+<mat-toolbar color="warn">Wrong Network</mat-toolbar>
+</h1>
+<div mat-dialog-content style="height: calc(100% - 150px);">
+  <p>Plase change network on your software wallet</p>
+  <p>Current Network: {{ getCurrentNetwork() }}</p>
+  <p>Required Network: {{ getRequiredNetwork() }}</p>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="reloadApp()">Reload</button>
+</div>

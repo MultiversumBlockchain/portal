@@ -1,0 +1,39 @@
+<h2 mat-dialog-title>Set Allowance</h2>
+<mat-dialog-content>
+  <mat-horizontal-stepper linear="true" #stepper style="height: 100%;">
+    <mat-step >
+      <ng-template matStepLabel>Delete</ng-template>
+      <p>Current Allowance: {{ fromWei()  }} EMTV</p>
+      <mat-form-field>
+        <mat-label>New allowance:</mat-label>
+        <input number matInput [(ngModel)]="allowance">
+        <span matSuffix>eMTV</span>
+      </mat-form-field>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Approve</ng-template>
+      <table class="mat-table">
+        <tr class="mat-row">
+          <td class="mat-cell">Transaction</td>
+          <td class="mat-cell">{{ approveTransaction && approveTransaction.hash }}</td>
+        </tr>
+        <tr class="mat-row">
+          <td class="mat-cell">Transaction Status:</td>
+          <td class="mat-cell">
+            {{ (approveTransaction && approveTransaction.blockHash) ? "Confirmed" : ""}}
+            {{ (approveTransaction && !approveTransaction.blockHash) ? "Pending" : ""}}
+          </td>
+        </tr>
+      </table>
+
+      <mat-progress-bar *ngIf="approveTransaction && ! approveTransaction.blockHash" mode="indeterminate"></mat-progress-bar>
+    </mat-step>
+  </mat-horizontal-stepper>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-flat-button color="warn" *ngIf="(this.stepper.selectedIndex != 2) && (!approveTransaction)" (click)="cancel()">Cancel</button>
+  <span class="spacer"></span>
+  <button mat-flat-button *ngIf="this.stepper.selectedIndex == 0" (click)="next()">Next<mat-icon>arrow_right</mat-icon></button>
+  <button mat-flat-button *ngIf="this.stepper.selectedIndex == 1 && (approveTransaction && approveTransaction.blockHash)" (click)="cancel()">Close</button>
+  <button mat-button *ngIf="(this.stepper.selectedIndex == 1) && (!approveTransaction)" (click)="approve()">Approve</button>
+</mat-dialog-actions>
