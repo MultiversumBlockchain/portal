@@ -73,7 +73,6 @@ export class NetworkService {
   }
 
   getNetworkVersion() : number {
-    const account = this.getAccount();
     return parseInt(window.ethereum.networkVersion);
   }
 }

@@ -72,30 +72,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    // const that = this;
-    // window.ethereum.on('accountsChanged', function (accounts) {
-    //   const dialogRef = that.dialog.open(AccountChangedDialogComponent, {
-    //     width: '400px',
-    //     height: '300px',
-    //     disableClose: true,
-    //   });
-    // })
-
-    // console.log(`networkVersion:` + this.getNetworkVersion() + "->" + typeof(this.getNetworkVersion()));
-
-    if (this.getNetworkVersion() === environment.REQUIRED_NETWORK) {
-      this.getAccountAndBalance();
-      this.getEMTVBalance();
-
-      this.getNetworkVersion();
-      this.fetchDatabases();
-    } else {
-      const dialogRef = this.dialog.open(WrongNetworkDialogComponent, {
-        width: '400px',
-        height: '300px',
-      //  disableClose: true,
-      });
-    }
+    this.fetchBalances();
   }
 
 
@@ -138,9 +115,7 @@ export class AppComponent implements OnInit {
      });
 
      dialogRef.afterClosed().subscribe(result => {
-        if(result) {
-          this.fetchDatabases();
-        }
+        this.fetchDatabases();
      });
   }
 

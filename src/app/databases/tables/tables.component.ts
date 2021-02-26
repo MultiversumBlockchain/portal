@@ -29,6 +29,8 @@ export class TablesComponent implements OnInit {
   data: Array<string> = new Array<string>();
   rows: Array<any> = new Array<any>();
 
+  counter : Number = 0;
+
   constructor(
     private route: ActivatedRoute,
     private dialog: MatDialog,
@@ -62,13 +64,18 @@ export class TablesComponent implements OnInit {
         this.fetchTableColumns();
       break;
       case 1:
-        this.fetchTableData();
+      this.databaseService.rowsTableCount(this.index).then(
+        (counter) => {
+          if (counter > 0)
+            this.fetchTableData();
+        }
+      );
       break;
     }
   }
 
   fetchTableData() {
-    this.databaseService.selectAll(this.index, 0, 10).then(
+    this.databaseService.selectAll(this.index, 0, 50).then(
       (results) => {
 
         this.dataColumns = new Array<string>();
@@ -89,7 +96,13 @@ export class TablesComponent implements OnInit {
 
           if (results[i].length > 0) {
             for (let field of this.fields) {
-              row[field.name] = window.web3.utils.hexToString(results[i][field.index]);
+              if(typeof results[i][field.index] === 'undefined')
+                row[field.name] = "";
+              else
+                if (results[i][field.index].length > 0)
+                  row[field.name] = results[i][field.index];
+                else
+                  row[field.name] = ""
             }
 
             this.rows.push(row);
@@ -97,6 +110,14 @@ export class TablesComponent implements OnInit {
         }
       }
     );
+
+    this.databaseService.rowsTableCount(this.index).then(
+      (results) => {
+        debugger;
+        this.counter = results;
+      }
+    );
+
   }
 
   insert() {

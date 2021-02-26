@@ -48,7 +48,7 @@ export class DatabaseService {
                   name : window.web3.utils.hexToUtf8(data[i+1]),
                   index : window.web3.utils.hexToNumber(data[i]),
                   type : 'table',
-                  database : that.db_address
+                  database : that.db_address,
               });
             }
 
@@ -100,6 +100,21 @@ export class DatabaseService {
     }) as Promise<any>;
   }
 
+  public async rowsTableCount(index: number) : Promise<any> {
+    return new Promise((resolve, reject) => {
+
+      this.databaseContract.methods.rowsCount(index).call(
+        function(err, raw) {
+
+          if (!err) {
+            resolve(raw);
+          } else {
+            reject(err);
+          }
+      });
+    }) as Promise<any>;
+  }
+
   public async createTable(name : string, columns : Array<string>) : Promise<any> {
     const account = await this.networkService.getAccount();
 
@@ -131,11 +146,10 @@ export class DatabaseService {
     let values = new Array<string>();
 
     for (let i = 0; i < data.length; i++) {
-      values.push(window.web3.utils.toHex(data[i]));
+      values.push(data[i]);
     }
 
     return new Promise((resolve, reject) => {
-
       this.databaseContract.methods.insert(window.web3.utils.toHex(index), values).send({ from: account },
         function(err, data) {
           if (!err) {
@@ -156,13 +170,12 @@ export class DatabaseService {
     let values = new Array<string>();
 
     for (let i = 0; i < data.length; i++) {
-      values.push(window.web3.utils.toHex(data[i]));
+      values.push(data[i]);
     }
 
     for (let i = 0; i < columns.length; i++) {
       columns[i] = window.web3.utils.toHex(columns[i]);
     }
-
 
     return new Promise((resolve, reject) => {
 

@@ -75,7 +75,8 @@ export class EMTVService {
 
      this.eMTVContract.methods.allowance(account, environment.FACTORY_ADDRESS).call(
        function(err, balance) {
-
+         debugger
+         
          if (!err) {
            const allowance =window.web3.utils.fromWei(balance, 'ether');
 
@@ -111,9 +112,6 @@ export class EMTVService {
 
   public async setAllowance(amount : number) : Promise<any> {
     const account = await this.networkService.getAccount();
-
-
-
 
      return new Promise((resolve, reject) => {
       this.eMTVContract = new window.web3.eth.Contract(eMTVABI, environment.EMTV_ADDRESS);

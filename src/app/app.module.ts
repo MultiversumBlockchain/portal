@@ -12,7 +12,7 @@ import { FactoryService} from './services/factory.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
-import {MatPaginatorModule} from '@angular/material/paginator';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule} from '@angular/material/icon';
 import { MatSidenavModule} from '@angular/material/sidenav';

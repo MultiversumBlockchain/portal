@@ -58,6 +58,11 @@ export class DatabaseComponent implements OnInit {
     );
   }
 
+  getTableRows(index : number){
+    return "unkwon";
+    //this.databasesService.rowsTableCount(index);
+  }
+
   newTable(): void {
      const dialogRef = this.dialog.open(NewTableDialogComponent, {
        width: '800px',
